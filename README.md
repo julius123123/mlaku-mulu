@@ -92,8 +92,9 @@ Semua endpoint (kecuali login) memerlukan header:
 ```
 Authorization: Bearer <access_token>
 ```
-
 Token didapat dari endpoint login.
+Login pegawai dapat menggunakan Email: pegawai@email.com dan password: password
+Login turis dapat menggunakan Email: budi@email.com dan password: password
 
 ---
 
