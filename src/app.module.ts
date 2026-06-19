@@ -14,19 +14,30 @@ import { TurisModule } from './turis/turis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      host: process.env.DATABASE_HOST ?? 'localhost',
-      port: Number(process.env.DATABASE_PORT) || 5432,
-      username: process.env.DATABASE_USER ?? 'postgres',
-      password: process.env.DATABASE_PASS ?? '',
-      database: process.env.DATABASE_NAME ?? 'mlaku_mulu',
-      entities: [Pegawai, Turis, Perjalanan],
-      synchronize: true,
-      ssl: process.env.DATABASE_URL
-        ? { rejectUnauthorized: false }
-        : false,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => {
+        const databaseUrl = process.env.DATABASE_URL;
+        if (databaseUrl) {
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            entities: [Pegawai, Turis, Perjalanan],
+            synchronize: true,
+            ssl: { rejectUnauthorized: false },
+          };
+        }
+        return {
+          type: 'postgres',
+          host: process.env.DATABASE_HOST ?? 'localhost',
+          port: Number(process.env.DATABASE_PORT) || 5432,
+          username: process.env.DATABASE_USER ?? 'postgres',
+          password: process.env.DATABASE_PASS ?? '',
+          database: process.env.DATABASE_NAME ?? 'mlaku_mulu',
+          entities: [Pegawai, Turis, Perjalanan],
+          synchronize: true,
+          ssl: false,
+        };
+      },
     }),
     AuthModule,
     PegawaiModule,
